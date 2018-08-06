@@ -25,6 +25,15 @@ def main():
                                     "analyzer": "custom_english_analyzer",  # And here’s the analyzer we want to use.
                                 }
                             },
+                        },
+                        "description": {  # The field we want to configure.
+                            "type": "text",  # The kind of data we’re working with.
+                            "fields": {  # create an analyzed field.
+                                "english_analyzed": {  # Name that field `name.english_analyzed`.
+                                    "type": "text",  # It’s also text.
+                                    "analyzer": "custom_english_analyzer",  # And here’s the analyzer we want to use.
+                                }
+                            },
                         }
                     }
                 }
@@ -81,7 +90,7 @@ def products_to_index():
             "_index": INDEX_NAME,
             "_type": DOC_TYPE,
             "_id": product.id,
-            "_source": {"name": product.name, "image": product.image},
+            "_source": {"name": product.name, "image": product.image, "description": product.description},
         }
 
 
