@@ -14,8 +14,34 @@ def main():
     es.indices.create(
         index=INDEX_NAME,
         body={
-            'mappings': {},
-            'settings': {},
+            "mappings": {
+                DOC_TYPE: {  # This mapping applies to products.
+                    "properties": {  # Just a magic word.
+                        "name": {  # The field we want to configure.
+                            "type": "text",  # The kind of data we’re working with.
+                            "fields": {  # create an analyzed field.
+                                "english_analyzed": {  # Name that field `name.english_analyzed`.
+                                    "type": "text",  # It’s also text.
+                                    "analyzer": "custom_english_analyzer",  # And here’s the analyzer we want to use.
+                                }
+                            },
+                        }
+                    }
+                }
+            },
+            "settings": {
+                "analysis": {  # magic word.
+                    "analyzer": {  # yet another magic word.
+                        "custom_english_analyzer": {  # The name of our analyzer.
+                            "type": "english",  # The built in analyzer we’re building on.
+                            "stopwords": [
+                                "made",
+                                "_english_",
+                            ],  # Our custom stop words, plus the defaults.
+                        }
+                    }
+                }
+            },
         },
     )
 
@@ -41,10 +67,7 @@ def index_product(es, product: ProductData):
         index=INDEX_NAME,
         doc_type=DOC_TYPE,
         id=1,
-        body={
-            "name": product.name,
-            "image": product.image,
-        }
+        body={"name": product.name, "image": product.image},
     )
 
     # Don't delete this! You'll need it to see if your indexing job is working,
@@ -58,12 +81,9 @@ def products_to_index():
             "_index": INDEX_NAME,
             "_type": DOC_TYPE,
             "_id": product.id,
-            "_source": {
-                "name": product.name,
-                "image": product.image,
-            }
+            "_source": {"name": product.name, "image": product.image},
         }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
